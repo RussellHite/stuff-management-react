@@ -6,7 +6,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home</Text>
-      <Text style={styles.subtitle}>Coming Soon</Text>
+      <Text style={styles.subtitle}>Coming Soon - Testing Lint!</Text>
       <StatusBar style="auto" />
     </View>
   );
