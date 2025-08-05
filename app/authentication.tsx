@@ -1,15 +1,72 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useUserStore } from '../src/store';
 
 export default function AuthenticationScreen() {
   const insets = useSafeAreaInsets();
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('demo@stuffhappens.com');
+  const [password, setPassword] = useState('demo123');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const { login, logout, user, isAuthenticated, isLoading } = useUserStore();
+
+  const handleAuth = async () => {
+    if (isLogin) {
+      try {
+        await login(email, password);
+        Alert.alert('Success', 'Logged in successfully!');
+      } catch (error) {
+        Alert.alert('Error', error instanceof Error ? error.message : 'Login failed');
+      }
+    } else {
+      Alert.alert('Info', 'Registration functionality coming soon!');
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    Alert.alert('Success', 'Logged out successfully!');
+  };
+
+  // Show user profile if authenticated
+  if (isAuthenticated && user) {
+    return (
+      <ScrollView style={styles.container}>
+        <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <MaterialIcons name="arrow-back" size={24} color="#007AFF" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Profile</Text>
+        </View>
+
+        <View style={styles.formContainer}>
+          <View style={styles.profileHeader}>
+            <View style={styles.avatar}>
+              <MaterialIcons name="person" size={48} color="#007AFF" />
+            </View>
+            <Text style={styles.userName}>{user.name}</Text>
+            <Text style={styles.userEmail}>{user.email}</Text>
+          </View>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <MaterialIcons name="logout" size={20} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.logoutButtonText}>Sign Out</Text>
+          </TouchableOpacity>
+
+          <View style={styles.note}>
+            <MaterialIcons name="info" size={16} color="#666" />
+            <Text style={styles.noteText}>
+              You are successfully logged in! Profile editing and user management features coming soon.
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -73,9 +130,13 @@ export default function AuthenticationScreen() {
             </View>
           )}
 
-          <TouchableOpacity style={styles.primaryButton}>
+          <TouchableOpacity 
+            style={[styles.primaryButton, isLoading && styles.disabledButton]} 
+            onPress={handleAuth}
+            disabled={isLoading}
+          >
             <Text style={styles.primaryButtonText}>
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {isLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
             </Text>
           </TouchableOpacity>
 
@@ -188,6 +249,9 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
   },
+  disabledButton: {
+    opacity: 0.6,
+  },
   linkButton: {
     alignItems: 'center',
     paddingVertical: 12,
@@ -210,5 +274,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
+  },
+  profileHeader: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#F0F0F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 16,
+    color: '#666',
+  },
+  logoutButton: {
+    backgroundColor: '#FF3B30',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '600',
   },
 });
