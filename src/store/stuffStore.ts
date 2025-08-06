@@ -76,7 +76,7 @@ export const useStuffStore = create<StuffStore>()(
 
       updateItem: (id, updates) => {
         set((state) => {
-          const index = state.items.findIndex(item => item.id === id);
+          const index = state.items.findIndex((item) => item.id === id);
           if (index !== -1) {
             state.items[index] = {
               ...state.items[index],
@@ -89,7 +89,7 @@ export const useStuffStore = create<StuffStore>()(
 
       deleteItem: (id) => {
         set((state) => {
-          const index = state.items.findIndex(item => item.id === id);
+          const index = state.items.findIndex((item) => item.id === id);
           if (index !== -1) {
             state.items.splice(index, 1);
           }

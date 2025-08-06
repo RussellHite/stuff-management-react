@@ -1,11 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Header } from '../../src/components';
+import { semanticColors } from '../../src/design';
 
 export default function AddScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add</Text>
-      <Text style={styles.subtitle}>Coming Soon</Text>
+      <Header title="Add" />
+      <View style={styles.content}>
+        <Text style={styles.title}>Add</Text>
+        <Text style={styles.subtitle}>Coming Soon</Text>
+      </View>
     </View>
   );
 }
@@ -13,7 +18,10 @@ export default function AddScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: semanticColors.background.secondary,
+  },
+  content: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,

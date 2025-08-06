@@ -6,7 +6,7 @@ A React Native mobile application built with Expo and TypeScript for managing an
 
 ### Prerequisites
 
-- Node.js 16+ 
+- Node.js 16+
 - npm or yarn
 - Expo CLI
 - Expo Go app on your mobile device (for testing)
@@ -14,15 +14,19 @@ A React Native mobile application built with Expo and TypeScript for managing an
 ### Installation & Setup
 
 **Step 1: Install Dependencies**
+
 ```bash
 npm install
 ```
 
 **Step 2: Start the Development Server**
+
 ```bash
 npm start
 ```
+
 or
+
 ```bash
 npx expo start
 ```
@@ -32,17 +36,21 @@ npx expo start
 **IMPORTANT**: All testing must be done via Windows Command Prompt. Follow these steps:
 
 ### 1. Install Dependencies
+
 Open Windows Command Prompt and run:
+
 ```cmd
 npm install
 ```
 
 ### 2. Start Development Server
+
 ```cmd
 npm start
 ```
 
 ### 3. Test on Mobile Device
+
 1. Install "Expo Go" app from App Store (iOS) or Google Play Store (Android)
 2. After running `npm start`, a QR code will appear in the terminal
 3. Scan the QR code with your device:
@@ -51,6 +59,7 @@ npm start
 4. The app should load on your device
 
 ### 4. Test on Web Browser
+
 ```cmd
 npm run web
 ```
@@ -58,11 +67,13 @@ npm run web
 ### 5. Test App Features
 
 #### Navigation Testing:
+
 - ✅ Tap each of the 5 bottom tabs (Home, Stuff, Add, List, Preferences)
 - ✅ Verify "Coming Soon" appears on Home, Stuff, Add, and List tabs
 - ✅ Verify Preferences tab shows admin menu list
 
 #### Preferences Screen Testing:
+
 - ✅ Tap on "Design System" - should show colors, typography, and components
 - ✅ Tap on "Authentication" - should show login/register form placeholders
 - ✅ Tap on "App Settings" - should show toggle switches and setting options
@@ -71,6 +82,7 @@ npm run web
 - ✅ Test back navigation on all admin screens
 
 #### UI/UX Testing:
+
 - ✅ Verify smooth tab transitions
 - ✅ Check that all text is readable
 - ✅ Verify icons appear correctly
@@ -78,11 +90,13 @@ npm run web
 - ✅ Ensure proper spacing and alignment
 
 ### 6. TypeScript Checking
+
 ```cmd
 npm run type-check
 ```
 
 ### 7. Running Tests
+
 ```cmd
 npm test
 ```
@@ -121,6 +135,7 @@ npm test
 ## 🎨 Features Implemented
 
 ### ✅ Phase 1: Core Project Setup
+
 - [x] Expo React Native project with TypeScript
 - [x] Git integration with proper .gitignore
 - [x] Main navigation with 5 tabs (Home, Stuff, Add, List, Preferences)
@@ -128,6 +143,7 @@ npm test
 - [x] Preferences screen with admin navigation
 
 ### ✅ Phase 2: Admin Screens
+
 - [x] Design System showcase screen
 - [x] Authentication placeholder screens
 - [x] App Settings with toggle switches
@@ -135,6 +151,7 @@ npm test
 - [x] Developer Tools with debug options
 
 ### 🚧 Planned Features (Future Phases)
+
 - [ ] Code quality tools (ESLint, Prettier, Husky)
 - [ ] Environment configuration
 - [ ] State management with Zustand
@@ -167,6 +184,7 @@ npm test
 ## 📋 User Stories Status
 
 ### ✅ Completed
+
 - User Story 1: Initialize React Native Project with Expo ✅
 - User Story 2: Connect Project to GitHub Repository ✅
 - User Story 3: Implement Main Navigation Structure ✅
@@ -175,6 +193,7 @@ npm test
 - User Story 8: Basic Authentication UI (Placeholder) ✅
 
 ### 🚧 In Progress
+
 - User Story 4: Development Tools and Code Quality
 - User Story 5: Environment Configuration
 - User Story 9: State Management Setup

@@ -6,8 +6,8 @@ import { STORAGE_KEYS, createPersistConfig } from '../utils/storage';
 // Mock authentication function (replace with real auth later)
 const mockAuth = async (email: string, password: string): Promise<User> => {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   if (email === 'demo@stuffhappens.com' && password === 'demo123') {
     return {
       id: '1',
@@ -17,7 +17,7 @@ const mockAuth = async (email: string, password: string): Promise<User> => {
       createdAt: new Date(),
     };
   }
-  
+
   throw new Error('Invalid credentials');
 };
 
@@ -34,10 +34,10 @@ export const useUserStore = create<UserStore>()(
         set({ isLoading: true });
         try {
           const user = await mockAuth(email, password);
-          set({ 
-            user, 
-            isAuthenticated: true, 
-            isLoading: false 
+          set({
+            user,
+            isAuthenticated: true,
+            isLoading: false,
           });
         } catch (error) {
           set({ isLoading: false });
@@ -46,22 +46,22 @@ export const useUserStore = create<UserStore>()(
       },
 
       logout: () => {
-        set({ 
-          user: null, 
-          isAuthenticated: false, 
-          isLoading: false 
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
         });
       },
 
       updateProfile: (updates: Partial<User>) => {
         const currentUser = get().user;
         if (currentUser) {
-          set({ 
-            user: { 
-              ...currentUser, 
+          set({
+            user: {
+              ...currentUser,
               ...updates,
-              updatedAt: new Date() 
-            } as User & { updatedAt: Date }
+              updatedAt: new Date(),
+            } as User & { updatedAt: Date },
           });
         }
       },

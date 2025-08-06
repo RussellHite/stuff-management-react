@@ -1,12 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { Header } from '../../src/components';
+import { semanticColors } from '../../src/design';
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Text style={styles.subtitle}>Coming Soon - Testing Lint!</Text>
+      <Header title="Home" />
+      <View style={styles.content}>
+        <Text style={styles.title}>Home</Text>
+        <Text style={styles.subtitle}>Coming Soon - Testing Lint!</Text>
+      </View>
       <StatusBar style="auto" />
     </View>
   );
@@ -15,7 +20,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: semanticColors.background.secondary,
+  },
+  content: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,

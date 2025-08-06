@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { tokens, semanticColors } from '../src/design';
+import { Header } from '../src/components';
 
 export default function DeveloperToolsScreen() {
   const insets = useSafeAreaInsets();
@@ -73,206 +75,187 @@ export default function DeveloperToolsScreen() {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#007AFF" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Developer Tools</Text>
-      </View>
+    <View style={styles.container}>
+      <Header title="Developer Tools" showBackButton={true} />
 
-      <View style={styles.warningBanner}>
-        <MaterialIcons name="warning" size={20} color="#FF9500" />
-        <Text style={styles.warningText}>
-          These tools are for development and testing purposes only.
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>System Information</Text>
-        {systemInfo.map((info) => (
-          <View key={info.label} style={styles.infoItem}>
-            <Text style={styles.infoLabel}>{info.label}</Text>
-            <Text style={styles.infoValue}>{info.value}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Developer Actions</Text>
-        {developerActions.map((action) => (
-          <TouchableOpacity
-            key={action.title}
-            style={styles.actionItem}
-            onPress={action.action}
-          >
-            <View style={styles.actionIcon}>
-              <MaterialIcons name={action.icon as any} size={24} color="#007AFF" />
-            </View>
-            <View style={styles.actionContent}>
-              <Text style={styles.actionTitle}>{action.title}</Text>
-              <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={20} color="#C7C7CC" />
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Debug Console</Text>
-        <View style={styles.consoleContainer}>
-          <Text style={styles.consoleText}>
-            Console output would appear here in a real implementation.
-          </Text>
-          <Text style={styles.consoleText}>
-            Check your terminal or debugger for actual console logs.
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.warningBanner}>
+          <MaterialIcons name="warning" size={20} color="#FF9500" />
+          <Text style={styles.warningText}>
+            These tools are for development and testing purposes only.
           </Text>
         </View>
-        <TouchableOpacity style={styles.clearButton}>
-          <Text style={styles.clearButtonText}>Clear Console</Text>
-        </TouchableOpacity>
-      </View>
 
-      <View style={styles.note}>
-        <MaterialIcons name="info" size={16} color="#666" />
-        <Text style={styles.noteText}>
-          Developer tools are placeholders and would connect to actual debugging functionality in a production app.
-        </Text>
-      </View>
-    </ScrollView>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>System Information</Text>
+          {systemInfo.map((info) => (
+            <View key={info.label} style={styles.infoItem}>
+              <Text style={styles.infoLabel}>{info.label}</Text>
+              <Text style={styles.infoValue}>{info.value}</Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Developer Actions</Text>
+          {developerActions.map((action) => (
+            <TouchableOpacity key={action.title} style={styles.actionItem} onPress={action.action}>
+              <View style={styles.actionIcon}>
+                <MaterialIcons name={action.icon as any} size={24} color="#007AFF" />
+              </View>
+              <View style={styles.actionContent}>
+                <Text style={styles.actionTitle}>{action.title}</Text>
+                <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={20} color="#C7C7CC" />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Debug Console</Text>
+          <View style={styles.consoleContainer}>
+            <Text style={styles.consoleText}>
+              Console output would appear here in a real implementation.
+            </Text>
+            <Text style={styles.consoleText}>
+              Check your terminal or debugger for actual console logs.
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.clearButton}>
+            <Text style={styles.clearButtonText}>Clear Console</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.note}>
+          <MaterialIcons name="info" size={16} color="#666" />
+          <Text style={styles.noteText}>
+            Developer tools are placeholders and would connect to actual debugging functionality in
+            a production app.
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: semanticColors.background.secondary,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+  scrollView: {
+    flex: 1,
   },
   warningBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF3CD',
-    marginHorizontal: 16,
-    marginTop: 16,
-    padding: 16,
-    borderRadius: 8,
-    gap: 8,
+    backgroundColor: semanticColors.status.lowStock.background,
+    marginHorizontal: tokens.spacing.md,
+    marginTop: tokens.spacing.md,
+    padding: tokens.spacing.md,
+    borderRadius: tokens.borderRadius.sm,
+    gap: tokens.spacing.sm,
   },
   warningText: {
     flex: 1,
-    fontSize: 14,
-    color: '#856404',
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.status.lowStock.text,
   },
   section: {
-    backgroundColor: '#fff',
-    margin: 16,
-    borderRadius: 12,
-    padding: 20,
+    padding: tokens.spacing.lg,
+    marginBottom: tokens.spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Besley-Medium',
+    color: semanticColors.text.primary,
+    marginBottom: tokens.spacing.md,
   },
   infoItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: tokens.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F7',
+    borderBottomColor: semanticColors.background.secondary,
   },
   infoLabel: {
-    fontSize: 17,
-    color: '#333',
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.primary,
   },
   infoValue: {
-    fontSize: 17,
-    color: '#666',
-    fontWeight: '500',
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-Medium',
+    color: semanticColors.text.secondary,
   },
   actionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: tokens.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F7',
+    borderBottomColor: semanticColors.background.secondary,
   },
   actionIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: semanticColors.button.secondary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: tokens.spacing.sm,
   },
   actionContent: {
     flex: 1,
   },
   actionTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-SemiBold',
+    color: semanticColors.text.primary,
+    marginBottom: tokens.spacing.xs,
   },
   actionSubtitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
   },
   consoleContainer: {
-    backgroundColor: '#1C1C1E',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: tokens.colors.gray[900],
+    borderRadius: tokens.borderRadius.sm,
+    padding: tokens.spacing.md,
+    marginBottom: tokens.spacing.md,
   },
   consoleText: {
     fontFamily: 'monospace',
-    fontSize: 14,
-    color: '#00D4AA',
+    fontSize: tokens.fontSize.sm,
+    color: tokens.colors.primary[500],
     lineHeight: 20,
   },
   clearButton: {
-    backgroundColor: '#FF3B30',
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: semanticColors.button.danger,
+    paddingVertical: tokens.spacing.sm,
+    borderRadius: tokens.borderRadius.sm,
     alignItems: 'center',
   },
   clearButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: tokens.colors.white,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-SemiBold',
   },
   note: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#fff',
-    margin: 16,
-    borderRadius: 12,
-    padding: 16,
-    gap: 8,
+    padding: tokens.spacing.md,
+    gap: tokens.spacing.sm,
+    marginBottom: tokens.spacing.md,
   },
   noteText: {
     flex: 1,
-    fontSize: 14,
-    color: '#666',
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
     lineHeight: 20,
   },
 });

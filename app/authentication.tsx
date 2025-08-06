@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { tokens, semanticColors } from '../src/design';
+import { Header } from '../src/components';
 import { useUserStore } from '../src/store';
 
 export default function AuthenticationScreen() {
@@ -11,7 +21,7 @@ export default function AuthenticationScreen() {
   const [email, setEmail] = useState('demo@stuffhappens.com');
   const [password, setPassword] = useState('demo123');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+
   const { login, logout, user, isAuthenticated, isLoading } = useUserStore();
 
   const handleAuth = async () => {
@@ -35,282 +45,258 @@ export default function AuthenticationScreen() {
   // Show user profile if authenticated
   if (isAuthenticated && user) {
     return (
-      <ScrollView style={styles.container}>
-        <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <MaterialIcons name="arrow-back" size={24} color="#007AFF" />
-          </TouchableOpacity>
-          <Text style={styles.title}>Profile</Text>
-        </View>
+      <View style={styles.container}>
+        <Header title="Profile" showBackButton={true} />
 
-        <View style={styles.formContainer}>
-          <View style={styles.profileHeader}>
-            <View style={styles.avatar}>
-              <MaterialIcons name="person" size={48} color="#007AFF" />
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <View style={styles.section}>
+            <View style={styles.profileHeader}>
+              <View style={styles.avatar}>
+                <MaterialIcons name="person" size={48} color="#007AFF" />
+              </View>
+              <Text style={styles.userName}>{user.name}</Text>
+              <Text style={styles.userEmail}>{user.email}</Text>
             </View>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userEmail}>{user.email}</Text>
-          </View>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <MaterialIcons name="logout" size={20} color="#fff" style={{ marginRight: 8 }} />
-            <Text style={styles.logoutButtonText}>Sign Out</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <MaterialIcons name="logout" size={20} color="#fff" style={{ marginRight: 8 }} />
+              <Text style={styles.logoutButtonText}>Sign Out</Text>
+            </TouchableOpacity>
 
-          <View style={styles.note}>
-            <MaterialIcons name="info" size={16} color="#666" />
-            <Text style={styles.noteText}>
-              You are successfully logged in! Profile editing and user management features coming soon.
-            </Text>
+            <View style={styles.note}>
+              <MaterialIcons name="info" size={16} color="#666" />
+              <Text style={styles.noteText}>
+                You are successfully logged in! Profile editing and user management features coming
+                soon.
+              </Text>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#007AFF" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Authentication</Text>
-      </View>
+    <View style={styles.container}>
+      <Header title="Authentication" showBackButton={true} />
 
-      <View style={styles.formContainer}>
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity
-            style={[styles.toggleButton, isLogin && styles.toggleButtonActive]}
-            onPress={() => setIsLogin(true)}
-          >
-            <Text style={[styles.toggleText, isLogin && styles.toggleTextActive]}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.toggleButton, !isLogin && styles.toggleButtonActive]}
-            onPress={() => setIsLogin(false)}
-          >
-            <Text style={[styles.toggleText, !isLogin && styles.toggleTextActive]}>Register</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="email" size={20} color="#666" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          <View style={styles.toggleContainer}>
+            <TouchableOpacity
+              style={[styles.toggleButton, isLogin && styles.toggleButtonActive]}
+              onPress={() => setIsLogin(true)}
+            >
+              <Text style={[styles.toggleText, isLogin && styles.toggleTextActive]}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.toggleButton, !isLogin && styles.toggleButtonActive]}
+              onPress={() => setIsLogin(false)}
+            >
+              <Text style={[styles.toggleText, !isLogin && styles.toggleTextActive]}>Register</Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock" size={20} color="#666" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          </View>
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <MaterialIcons name="email" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
 
-          {!isLogin && (
             <View style={styles.inputContainer}>
               <MaterialIcons name="lock" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
                 secureTextEntry
               />
             </View>
-          )}
 
-          <TouchableOpacity 
-            style={[styles.primaryButton, isLoading && styles.disabledButton]} 
-            onPress={handleAuth}
-            disabled={isLoading}
-          >
-            <Text style={styles.primaryButtonText}>
-              {isLoading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
-            </Text>
-          </TouchableOpacity>
+            {!isLogin && (
+              <View style={styles.inputContainer}>
+                <MaterialIcons name="lock" size={20} color="#666" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry
+                />
+              </View>
+            )}
 
-          {isLogin && (
-            <TouchableOpacity style={styles.linkButton}>
-              <Text style={styles.linkText}>Forgot Password?</Text>
+            <TouchableOpacity
+              style={[styles.primaryButton, isLoading && styles.disabledButton]}
+              onPress={handleAuth}
+              disabled={isLoading}
+            >
+              <Text style={styles.primaryButtonText}>
+                {isLoading ? 'Loading...' : isLogin ? 'Sign In' : 'Create Account'}
+              </Text>
             </TouchableOpacity>
-          )}
-        </View>
 
-        <View style={styles.note}>
-          <MaterialIcons name="info" size={16} color="#666" />
-          <Text style={styles.noteText}>
-            This is a placeholder authentication screen. No actual authentication is implemented yet.
-          </Text>
+            {isLogin && (
+              <TouchableOpacity style={styles.linkButton}>
+                <Text style={styles.linkText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View style={styles.note}>
+            <MaterialIcons name="info" size={16} color="#666" />
+            <Text style={styles.noteText}>
+              This is a placeholder authentication screen. No actual authentication is implemented
+              yet.
+            </Text>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: semanticColors.background.secondary,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
+  scrollView: {
+    flex: 1,
   },
-  backButton: {
-    marginRight: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  formContainer: {
-    margin: 16,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
+  section: {
+    padding: tokens.spacing.lg,
+    marginBottom: tokens.spacing.md,
   },
   toggleContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F2F2F7',
-    borderRadius: 8,
-    padding: 4,
-    marginBottom: 24,
+    backgroundColor: semanticColors.background.secondary,
+    borderRadius: tokens.borderRadius.sm,
+    padding: tokens.spacing.xs,
+    marginBottom: tokens.spacing.lg,
   },
   toggleButton: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: tokens.spacing.sm,
     alignItems: 'center',
-    borderRadius: 6,
+    borderRadius: tokens.borderRadius.xs,
   },
   toggleButtonActive: {
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    backgroundColor: tokens.colors.white,
   },
   toggleText: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
   },
   toggleTextActive: {
-    color: '#333',
-    fontWeight: '600',
+    color: semanticColors.text.primary,
+    fontFamily: 'Montserrat-SemiBold',
   },
   form: {
-    gap: 16,
+    gap: tokens.spacing.md,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E5E5EA',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 16,
+    borderColor: semanticColors.border.light,
+    borderRadius: tokens.borderRadius.sm,
+    paddingHorizontal: tokens.spacing.sm,
+    paddingVertical: tokens.spacing.md,
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: tokens.spacing.sm,
   },
   input: {
     flex: 1,
-    fontSize: 17,
-    color: '#333',
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.primary,
   },
   primaryButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 16,
-    borderRadius: 8,
+    backgroundColor: semanticColors.button.primary,
+    paddingVertical: tokens.spacing.md,
+    borderRadius: tokens.borderRadius.sm,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: tokens.spacing.sm,
   },
   primaryButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '600',
+    color: tokens.colors.white,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-SemiBold',
   },
   disabledButton: {
     opacity: 0.6,
   },
   linkButton: {
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: tokens.spacing.sm,
   },
   linkText: {
-    color: '#007AFF',
-    fontSize: 16,
+    color: semanticColors.text.accent,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat',
   },
   note: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#F8F9FA',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 20,
-    gap: 8,
+    padding: tokens.spacing.sm,
+    marginTop: tokens.spacing.md,
+    gap: tokens.spacing.sm,
   },
   noteText: {
     flex: 1,
-    fontSize: 14,
-    color: '#666',
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
     lineHeight: 20,
   },
   profileHeader: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: tokens.spacing.xl,
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: semanticColors.button.secondary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: tokens.spacing.md,
   },
   userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    fontSize: tokens.fontSize.lg,
+    fontFamily: 'Besley-Bold',
+    color: semanticColors.text.primary,
+    marginBottom: tokens.spacing.xs,
   },
   userEmail: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    backgroundColor: semanticColors.button.danger,
+    paddingVertical: tokens.spacing.md,
+    paddingHorizontal: tokens.spacing.lg,
+    borderRadius: tokens.borderRadius.sm,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: tokens.spacing.md,
   },
   logoutButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '600',
+    color: tokens.colors.white,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });

@@ -53,22 +53,26 @@ npx expo build:ios
 This React Native application follows these architectural patterns:
 
 ### Component Structure
+
 - Use functional components with hooks
 - Organize components by feature/screen in directories
 - Separate presentational and container components
 - Use TypeScript for type safety throughout
 
 ### State Management
+
 - Use Zustand for lightweight global state management
 - Use React Query/TanStack Query for server state
 - Use AsyncStorage for local persistence
 
 ### Navigation
+
 - React Navigation v6 with bottom tabs as main navigation
 - Stack navigation within individual tab screens
 - TypeScript navigation types for type safety
 
 ### Folder Structure
+
 ```
 src/
 ├── components/         # Reusable UI components
@@ -83,6 +87,7 @@ src/
 ```
 
 ### Testing Strategy
+
 - Use Jest and React Native Testing Library
 - Test component behavior, not implementation
 - Use MSW for API mocking
@@ -92,13 +97,14 @@ src/
 
 - Design mobile-first with touch interactions
 - Consider offline functionality and data sync
-- Handle different screen sizes and orientations  
+- Handle different screen sizes and orientations
 - Use native device features appropriately
 - Consider performance on lower-end devices
 
 ## Stuff Management Features
 
 The application includes:
+
 - Main navigation with 5 tabs: Home, Stuff, Add, List, Preferences
 - Item CRUD operations for managing "stuff"
 - Categories and organization system
@@ -121,9 +127,11 @@ The application includes:
 # Claude Code Development Principles
 
 ## Core Development Philosophy
+
 Follow these fundamental software engineering principles in all code you write, review, or modify:
 
 ## 1. KISS (Keep It Simple, Stupid)
+
 - **Write straightforward, uncomplicated code** that solves the problem directly
 - **Avoid clever tricks or overly complex solutions** unless absolutely necessary
 - **Choose clarity over cleverness** - if there are two ways to solve a problem, pick the more readable one
@@ -132,6 +140,7 @@ Follow these fundamental software engineering principles in all code you write, 
 - **Prefer explicit code over implicit behavior**
 
 ## 2. YAGNI (You Aren't Gonna Need It)
+
 - **Only implement features that are currently needed** - don't build for hypothetical future requirements
 - **Resist the urge to add "just in case" functionality**
 - **Remove unused code, dependencies, and configuration** when you encounter it
@@ -140,6 +149,7 @@ Follow these fundamental software engineering principles in all code you write, 
 - **Refactor and extend when you actually need the functionality**
 
 ## 3. Single Responsibility Principle
+
 - **Each function should do one thing well** and have a single reason to change
 - **Each module/class should have one clearly defined purpose**
 - **If you can describe a function's purpose with "and", it probably does too much**
@@ -148,6 +158,7 @@ Follow these fundamental software engineering principles in all code you write, 
 - **Keep configuration separate from implementation**
 
 ## 4. Favor Readability and Maintainability
+
 - **Write code as if the person maintaining it is a violent psychopath who knows where you live**
 - **Use meaningful comments to explain WHY, not what** (the code should explain what)
 - **Choose slightly verbose but clear code over terse but confusing code**
@@ -158,6 +169,7 @@ Follow these fundamental software engineering principles in all code you write, 
 ## Specific Implementation Guidelines
 
 ### Code Structure
+
 - **Use small, focused functions** (ideally 10-20 lines, never more than 50)
 - **Limit function parameters** (3-4 max, use objects for more complex data)
 - **Use clear, descriptive names** for variables, functions, and classes
@@ -165,24 +177,28 @@ Follow these fundamental software engineering principles in all code you write, 
 - **Keep related files together** in logical directory structures
 
 ### Error Handling
+
 - **Handle errors explicitly** rather than ignoring them
 - **Provide meaningful error messages** that help with debugging
 - **Fail fast and fail clearly** when something goes wrong
 - **Use consistent error handling patterns** throughout the application
 
 ### Testing and Documentation
+
 - **Write tests for new functionality** (but don't over-engineer test coverage)
 - **Include basic usage examples** in function/module documentation
 - **Document any non-obvious business logic or domain-specific requirements**
 - **Keep README and setup instructions current**
 
 ### Dependencies and Libraries
+
 - **Minimize external dependencies** - only add what you actually need
 - **Choose well-maintained, stable libraries** over cutting-edge alternatives
 - **Document why specific libraries were chosen** for future maintainers
 - **Regularly review and update dependencies** for security and compatibility
 
 ## Decision-Making Framework
+
 When faced with implementation choices, ask yourself:
 
 1. **Is this the simplest solution that works?**
@@ -192,7 +208,9 @@ When faced with implementation choices, ask yourself:
 5. **Can I explain this approach in plain English to a non-programmer?**
 
 ## Code Review Checklist
+
 Before submitting code, ensure:
+
 - [ ] Functions are small and focused on a single task
 - [ ] Variable and function names clearly indicate their purpose
 - [ ] No unnecessary complexity or premature optimization
@@ -202,6 +220,7 @@ Before submitting code, ensure:
 - [ ] Comments explain complex business logic, not obvious code
 
 ## Remember
+
 **Good code is not just working code - it's code that can be easily understood, modified, and maintained by other developers (including your future self).** When in doubt, err on the side of simplicity and clarity.
 
 The goal is to build an application that is reliable, maintainable, and easy for the team to work with over time.

@@ -1,207 +1,380 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const colors = {
-  primary: '#007AFF',
-  secondary: '#5856D6',
-  success: '#34C759',
-  warning: '#FF9500',
-  danger: '#FF3B30',
-  info: '#5AC8FA',
-  light: '#F2F2F7',
-  dark: '#1C1C1E',
-  gray: '#8E8E93',
-};
+import { tokens, semanticColors } from '../src/design';
+import {
+  Header,
+  SearchInput,
+  FilterBar,
+  Counter,
+  StatusBadge,
+  ItemRow,
+  SectionHeader,
+} from '../src/components';
 
 export default function DesignSystemScreen() {
   const insets = useSafeAreaInsets();
-  
+  const [searchValue, setSearchValue] = useState('');
+  const [counterValue, setCounterValue] = useState(5);
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#007AFF" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Design System</Text>
-      </View>
+    <View style={styles.container}>
+      <Header title="Design System" showBackButton={true} />
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Color Palette</Text>
-        <View style={styles.colorGrid}>
-          {Object.entries(colors).map(([name, color]) => (
-            <View key={name} style={styles.colorItem}>
-              <View style={[styles.colorSwatch, { backgroundColor: color }]} />
-              <Text style={styles.colorName}>{name}</Text>
-              <Text style={styles.colorValue}>{color}</Text>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          {/* Colors Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Colors</Text>
+            <View style={styles.colorGrid}>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Primary</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.primary).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Neutral</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.neutral).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Gray</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.gray).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Danger</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.danger).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Warning</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.warning).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Info</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.info).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.colorRow}>
+                <Text style={styles.colorGroupTitle}>Accent</Text>
+                <View style={styles.colorRowItems}>
+                  {Object.entries(tokens.colors.accent).map(([key, value]) => (
+                    <View key={key} style={styles.colorItem}>
+                      <View style={[styles.colorSwatch, { backgroundColor: value }]} />
+                      <Text style={styles.colorLabel}>{key}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
             </View>
-          ))}
-        </View>
-      </View>
+          </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Typography</Text>
-        <View style={styles.typographyContainer}>
-          <Text style={styles.heading1}>Heading 1 - 32pt Bold</Text>
-          <Text style={styles.heading2}>Heading 2 - 28pt Bold</Text>
-          <Text style={styles.heading3}>Heading 3 - 24pt Semibold</Text>
-          <Text style={styles.body}>Body Text - 17pt Regular</Text>
-          <Text style={styles.caption}>Caption - 14pt Regular</Text>
-        </View>
-      </View>
+          {/* Typography Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Typography</Text>
+            <Text
+              style={[
+                styles.typeSample,
+                { fontSize: tokens.fontSize.xl, fontFamily: 'Besley-Bold' },
+              ]}
+            >
+              Header XL - Besley Bold
+            </Text>
+            <Text
+              style={[
+                styles.typeSample,
+                { fontSize: tokens.fontSize.lg, fontFamily: 'Besley-Medium' },
+              ]}
+            >
+              Header Large - Besley Medium
+            </Text>
+            <Text
+              style={[
+                styles.typeSample,
+                { fontSize: tokens.fontSize.md, fontFamily: 'Montserrat-SemiBold' },
+              ]}
+            >
+              Body Medium - Montserrat SemiBold
+            </Text>
+            <Text
+              style={[
+                styles.typeSample,
+                { fontSize: tokens.fontSize.md, fontFamily: 'Montserrat' },
+              ]}
+            >
+              Body Regular - Montserrat Regular
+            </Text>
+            <Text
+              style={[
+                styles.typeSample,
+                { fontSize: tokens.fontSize.sm, fontFamily: 'Montserrat' },
+              ]}
+            >
+              Body Small - Montserrat Regular
+            </Text>
+            <Text
+              style={[
+                styles.typeSample,
+                { fontSize: tokens.fontSize.xs, fontFamily: 'Montserrat-Light' },
+              ]}
+            >
+              Caption - Montserrat Light
+            </Text>
+          </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Components</Text>
-        <View style={styles.componentsContainer}>
-          <TouchableOpacity style={[styles.button, styles.primaryButton]}>
-            <Text style={styles.primaryButtonText}>Primary Button</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.button, styles.secondaryButton]}>
-            <Text style={styles.secondaryButtonText}>Secondary Button</Text>
-          </TouchableOpacity>
+          {/* Components Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Components</Text>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Card Component</Text>
-            <Text style={styles.cardContent}>This is an example of a card component with shadow and rounded corners.</Text>
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Header</Text>
+              <View style={styles.componentWrapper}>
+                <Header />
+              </View>
+            </View>
+
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Search Input</Text>
+              <View style={styles.componentWrapper}>
+                <SearchInput
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  placeholder="Look up an item"
+                />
+              </View>
+            </View>
+
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Filter Bar</Text>
+              <View style={styles.componentWrapper}>
+                <FilterBar
+                  sortBy="Room"
+                  resultCount={24}
+                  onSortPress={() => console.log('Sort pressed')}
+                />
+              </View>
+            </View>
+
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Counter</Text>
+              <View style={[styles.componentWrapper, styles.centerContent]}>
+                <Counter
+                  value={counterValue}
+                  onIncrement={() => setCounterValue((v) => v + 1)}
+                  onDecrement={() => setCounterValue((v) => Math.max(0, v - 1))}
+                />
+              </View>
+            </View>
+
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Status Badges</Text>
+              <View style={[styles.componentWrapper, styles.badgeRow]}>
+                <StatusBadge status="in stock" />
+                <StatusBadge status="low stock" />
+                <StatusBadge status="out of stock" />
+              </View>
+            </View>
+
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Section Header</Text>
+              <View style={styles.componentWrapper}>
+                <SectionHeader title="Kitchen" icon="kitchen" />
+              </View>
+            </View>
+
+            <View style={styles.componentSection}>
+              <Text style={styles.componentTitle}>Item Row</Text>
+              <View style={styles.componentWrapper}>
+                <ItemRow
+                  name="Paper Towels"
+                  location="Under sink"
+                  count={3}
+                  status="in stock"
+                  onIncrement={() => console.log('Increment')}
+                  onDecrement={() => console.log('Decrement')}
+                  onClick={() => console.log('Clicked')}
+                />
+                <ItemRow
+                  name="Dish Soap"
+                  location="Sink cabinet"
+                  count={1}
+                  status="low stock"
+                  onIncrement={() => console.log('Increment')}
+                  onDecrement={() => console.log('Decrement')}
+                  onClick={() => console.log('Clicked')}
+                />
+                <ItemRow
+                  name="Trash Bags"
+                  location="Pantry"
+                  count={0}
+                  status="out of stock"
+                  onIncrement={() => console.log('Increment')}
+                  onDecrement={() => console.log('Decrement')}
+                  onClick={() => console.log('Clicked')}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Spacing Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Spacing</Text>
+            <View style={styles.spacingGrid}>
+              {Object.entries(tokens.spacing).map(([key, value]) => (
+                <View key={key} style={styles.spacingItem}>
+                  <View
+                    style={[styles.spacingBox, { width: value as number, height: value as number }]}
+                  />
+                  <Text style={styles.spacingLabel}>
+                    {key}: {value}px
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: semanticColors.background.secondary,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
+  scrollView: {
+    flex: 1,
   },
-  backButton: {
-    marginRight: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+  content: {
+    padding: tokens.spacing.lg,
   },
   section: {
-    backgroundColor: '#fff',
-    margin: 16,
-    borderRadius: 12,
-    padding: 20,
+    marginBottom: tokens.spacing.xl,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
+    fontSize: tokens.fontSize.lg,
+    fontFamily: 'Besley-SemiBold',
+    marginBottom: tokens.spacing.md,
+    color: semanticColors.text.primary,
   },
   colorGrid: {
+    gap: tokens.spacing.md,
+  },
+  colorRow: {
+    marginBottom: tokens.spacing.md,
+  },
+  colorGroupTitle: {
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat-Medium',
+    color: semanticColors.text.secondary,
+    marginBottom: tokens.spacing.sm,
+  },
+  colorRowItems: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: tokens.spacing.md,
   },
   colorItem: {
     alignItems: 'center',
-    width: '30%',
+    minWidth: 60,
   },
   colorSwatch: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginBottom: 8,
+    width: 40,
+    height: 40,
+    borderRadius: tokens.borderRadius.sm,
+    marginBottom: tokens.spacing.xs,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: semanticColors.border.light,
   },
-  colorName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    textTransform: 'capitalize',
+  colorLabel: {
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
   },
-  colorValue: {
-    fontSize: 12,
-    color: '#666',
+  typeSample: {
+    marginBottom: tokens.spacing.sm,
+    color: semanticColors.text.primary,
   },
-  typographyContainer: {
-    gap: 12,
+  componentSection: {
+    marginBottom: tokens.spacing.lg,
   },
-  heading1: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
+  componentTitle: {
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-Medium',
+    color: semanticColors.text.secondary,
+    marginBottom: tokens.spacing.sm,
   },
-  heading2: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+  componentWrapper: {
+    backgroundColor: tokens.colors.white,
+    borderRadius: tokens.borderRadius.sm,
+    overflow: 'hidden',
   },
-  heading3: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333',
-  },
-  body: {
-    fontSize: 17,
-    color: '#333',
-  },
-  caption: {
-    fontSize: 14,
-    color: '#666',
-  },
-  componentsContainer: {
-    gap: 16,
-  },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+  centerContent: {
+    padding: tokens.spacing.md,
     alignItems: 'center',
   },
-  primaryButton: {
-    backgroundColor: '#007AFF',
+  badgeRow: {
+    flexDirection: 'row',
+    gap: tokens.spacing.sm,
+    padding: tokens.spacing.md,
   },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '600',
+  spacingGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: tokens.spacing.md,
   },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#007AFF',
+  spacingItem: {
+    alignItems: 'center',
   },
-  secondaryButtonText: {
-    color: '#007AFF',
-    fontSize: 17,
-    fontWeight: '600',
+  spacingBox: {
+    backgroundColor: semanticColors.button.primary,
+    borderRadius: tokens.borderRadius.xs,
+    marginBottom: tokens.spacing.xs,
   },
-  card: {
-    backgroundColor: '#F8F9FA',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-  },
-  cardContent: {
-    fontSize: 15,
-    color: '#666',
-    lineHeight: 22,
+  spacingLabel: {
+    fontSize: tokens.fontSize.xs,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
   },
 });

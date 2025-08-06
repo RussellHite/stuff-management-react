@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 're
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { tokens, semanticColors } from '../src/design';
+import { Header } from '../src/components';
 
 export default function AppSettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -75,116 +77,107 @@ export default function AppSettingsScreen() {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#007AFF" />
-        </TouchableOpacity>
-        <Text style={styles.title}>App Settings</Text>
-      </View>
+    <View style={styles.container}>
+      <Header title="App Settings" showBackButton={true} />
 
-      {settingsSections.map((section) => (
-        <View key={section.title} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-          {section.items.map((item, index) => (
-            <View key={index} style={styles.settingItem}>
-              <View style={styles.settingContent}>
-                <Text style={styles.settingTitle}>{item.title}</Text>
-                <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {settingsSections.map((section) => (
+          <View key={section.title} style={styles.section}>
+            <Text style={styles.sectionTitle}>{section.title}</Text>
+            {section.items.map((item, index) => (
+              <View key={index} style={styles.settingItem}>
+                <View style={styles.settingContent}>
+                  <Text style={styles.settingTitle}>{item.title}</Text>
+                  <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+                </View>
+                {item.type === 'switch' && (
+                  <Switch
+                    value={item.value}
+                    onValueChange={item.onToggle}
+                    trackColor={{
+                      false: semanticColors.border.light,
+                      true: semanticColors.text.accent,
+                    }}
+                    thumbColor={tokens.colors.white}
+                  />
+                )}
+                {item.type === 'action' && (
+                  <TouchableOpacity onPress={item.action}>
+                    <MaterialIcons
+                      name="chevron-right"
+                      size={20}
+                      color={semanticColors.text.tertiary}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
-              {item.type === 'switch' && (
-                <Switch
-                  value={item.value}
-                  onValueChange={item.onToggle}
-                  trackColor={{ false: '#E5E5EA', true: '#007AFF' }}
-                  thumbColor="#FFFFFF"
-                />
-              )}
-              {item.type === 'action' && (
-                <TouchableOpacity onPress={item.action}>
-                  <MaterialIcons name="chevron-right" size={20} color="#C7C7CC" />
-                </TouchableOpacity>
-              )}
-            </View>
-          ))}
-        </View>
-      ))}
+            ))}
+          </View>
+        ))}
 
-      <View style={styles.note}>
-        <MaterialIcons name="info" size={16} color="#666" />
-        <Text style={styles.noteText}>
-          Settings are currently for demonstration purposes. Functionality will be implemented in future updates.
-        </Text>
-      </View>
-    </ScrollView>
+        <View style={styles.note}>
+          <MaterialIcons name="info" size={16} color="#666" />
+          <Text style={styles.noteText}>
+            Settings are currently for demonstration purposes. Functionality will be implemented in
+            future updates.
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: semanticColors.background.secondary,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+  scrollView: {
+    flex: 1,
   },
   section: {
-    backgroundColor: '#fff',
-    margin: 16,
-    borderRadius: 12,
-    padding: 20,
+    padding: tokens.spacing.lg,
+    marginBottom: tokens.spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Besley-Medium',
+    color: semanticColors.text.primary,
+    marginBottom: tokens.spacing.md,
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: tokens.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#F2F2F7',
+    borderBottomColor: semanticColors.background.secondary,
   },
   settingContent: {
     flex: 1,
   },
   settingTitle: {
-    fontSize: 17,
-    color: '#333',
-    marginBottom: 2,
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-Medium',
+    color: semanticColors.text.primary,
+    marginBottom: tokens.spacing.xs,
   },
   settingSubtitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
   },
   note: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#fff',
-    margin: 16,
-    borderRadius: 12,
-    padding: 16,
-    gap: 8,
+    padding: tokens.spacing.md,
+    gap: tokens.spacing.sm,
+    marginBottom: tokens.spacing.md,
   },
   noteText: {
     flex: 1,
-    fontSize: 14,
-    color: '#666',
+    fontSize: tokens.fontSize.sm,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
     lineHeight: 20,
   },
 });
