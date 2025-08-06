@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Stuff Happens",
+    "slug": "stuff-happens-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "stuffhappens",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#382C66"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.stuffhappens.mobile",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes for inventory items."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#382C66"
+      },
+      "package": "com.stuffhappens.mobile",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-router"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2f36a939-4c71-4ddf-88fd-038828d9c390"
+      }
+    }
+  }
+}
