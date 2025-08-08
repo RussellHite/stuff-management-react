@@ -49,6 +49,13 @@
       },
       "eas": {
         "projectId": "2f36a939-4c71-4ddf-88fd-038828d9c390"
+      },
+      "environment": {
+        "current": "development",
+        "indicator": {
+          "enabled": true,
+          "position": "top-right"
+        }
       }
     }
   }

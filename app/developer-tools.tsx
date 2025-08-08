@@ -1,20 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tokens, semanticColors } from '../src/design';
 import { Header } from '../src/components';
+import { 
+  supabaseService, 
+  checkConnectionHealth, 
+  getEnvironmentInfo, 
+  testConnection 
+} from '../src/services/supabase';
+import { getEnvironmentDebugInfo } from '../src/utils/environment';
+import type { ConnectionHealth } from '../src/types/supabase';
 
 export default function DeveloperToolsScreen() {
   const insets = useSafeAreaInsets();
   const [debugMode, setDebugMode] = useState(false);
+  const [connectionHealth, setConnectionHealth] = useState<ConnectionHealth | null>(null);
+  const [isTestingConnection, setIsTestingConnection] = useState(false);
+
+  useEffect(() => {
+    // Load initial connection health
+    checkConnectionHealth()
+      .then(setConnectionHealth)
+      .catch((error) => {
+        console.warn('Failed to check connection health:', error);
+      });
+  }, []);
 
   const showAlert = (title: string, message: string) => {
     Alert.alert(title, message);
   };
 
+  const testSupabaseConnection = async () => {
+    setIsTestingConnection(true);
+    try {
+      const isConnected = await testConnection(3);
+      const health = await checkConnectionHealth();
+      setConnectionHealth(health);
+      
+      showAlert(
+        'Connection Test', 
+        `Connection ${isConnected ? 'successful' : 'failed'}!\n` +
+        `Latency: ${health.latency || 'N/A'}ms\n` +
+        `Status: ${health.isConnected ? 'Connected' : 'Disconnected'}`
+      );
+    } catch (error) {
+      showAlert('Connection Error', `Failed to test connection: ${error}`);
+    } finally {
+      setIsTestingConnection(false);
+    }
+  };
+
+  const showEnvironmentInfo = () => {
+    const envInfo = getEnvironmentDebugInfo();
+    const supabaseInfo = getEnvironmentInfo();
+    
+    const message = `Environment: ${envInfo.environment}\n` +
+      `Platform: ${envInfo.constants.platform?.ios ? 'iOS' : 'Android'}\n` +
+      `Debug Mode: ${envInfo.constants.debugMode}\n` +
+      `Supabase URL: ${envInfo.environmentVariables.EXPO_PUBLIC_SUPABASE_URL}\n` +
+      `Supabase Key: ${envInfo.environmentVariables.EXPO_PUBLIC_SUPABASE_ANON_KEY}\n` +
+      `Validation: ${envInfo.supabaseValidation.isValid ? 'Valid' : 'Invalid'}\n` +
+      `Errors: ${envInfo.supabaseValidation.errors.length}\n` +
+      `Warnings: ${envInfo.supabaseValidation.warnings.length}`;
+    
+    showAlert('Environment Info', message);
+  };
+
   const developerActions = [
+    {
+      title: 'Test Supabase Connection',
+      subtitle: isTestingConnection 
+        ? 'Testing connection...' 
+        : connectionHealth 
+          ? `${connectionHealth.isConnected ? 'Connected' : 'Disconnected'} (${connectionHealth.latency}ms)`
+          : 'Connection status unknown',
+      icon: 'cloud',
+      action: testSupabaseConnection,
+      disabled: isTestingConnection,
+    },
+    {
+      title: 'Environment Info',
+      subtitle: 'Show environment and configuration details',
+      icon: 'info',
+      action: showEnvironmentInfo,
+    },
     {
       title: 'Toggle Debug Mode',
       subtitle: debugMode ? 'Debug mode is ON' : 'Debug mode is OFF',
@@ -41,37 +113,27 @@ export default function DeveloperToolsScreen() {
       },
     },
     {
-      title: 'Log Device Info',
-      subtitle: 'Print device information to console',
-      icon: 'phone-android',
+      title: 'Reset Supabase Client',
+      subtitle: 'Reinitialize Supabase connection',
+      icon: 'refresh',
       action: () => {
-        console.log('Device info logged (placeholder)');
-        showAlert('Device Info', 'Device information logged to console');
-      },
-    },
-    {
-      title: 'Test Crash Reporting',
-      subtitle: 'Trigger a test crash',
-      icon: 'warning',
-      action: () => {
-        showAlert('Crash Test', 'Crash reporting test (placeholder)');
-      },
-    },
-    {
-      title: 'Performance Monitor',
-      subtitle: 'Show performance metrics',
-      icon: 'speed',
-      action: () => {
-        showAlert('Performance', 'Performance monitoring (placeholder)');
+        supabaseService.resetClient();
+        setConnectionHealth(null);
+        showAlert('Reset Complete', 'Supabase client has been reset');
       },
     },
   ];
 
+  const envInfo = getEnvironmentDebugInfo();
+  
   const systemInfo = [
-    { label: 'Environment', value: __DEV__ ? 'Development' : 'Production' },
+    { label: 'Environment', value: envInfo.environment },
     { label: 'Platform', value: require('react-native').Platform.OS },
     { label: 'Debug Mode', value: debugMode ? 'Enabled' : 'Disabled' },
-    { label: 'Hermes', value: 'Enabled' },
+    { label: 'Supabase Status', value: connectionHealth?.isConnected ? 'Connected' : 'Disconnected' },
+    { label: 'Connection Latency', value: connectionHealth?.latency ? `${connectionHealth.latency}ms` : 'N/A' },
+    { label: 'Config Valid', value: envInfo.supabaseValidation.isValid ? 'Yes' : 'No' },
+    { label: 'Last Health Check', value: connectionHealth?.lastChecked.toLocaleTimeString() || 'Never' },
   ];
 
   return (
@@ -99,15 +161,32 @@ export default function DeveloperToolsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Developer Actions</Text>
           {developerActions.map((action) => (
-            <TouchableOpacity key={action.title} style={styles.actionItem} onPress={action.action}>
-              <View style={styles.actionIcon}>
-                <MaterialIcons name={action.icon as any} size={24} color="#007AFF" />
+            <TouchableOpacity 
+              key={action.title} 
+              style={[styles.actionItem, action.disabled && styles.actionItemDisabled]} 
+              onPress={action.disabled ? undefined : action.action}
+              disabled={action.disabled}
+            >
+              <View style={[styles.actionIcon, action.disabled && styles.actionIconDisabled]}>
+                <MaterialIcons 
+                  name={action.icon as any} 
+                  size={24} 
+                  color={action.disabled ? "#C7C7CC" : "#007AFF"} 
+                />
               </View>
               <View style={styles.actionContent}>
-                <Text style={styles.actionTitle}>{action.title}</Text>
-                <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+                <Text style={[styles.actionTitle, action.disabled && styles.actionTitleDisabled]}>
+                  {action.title}
+                </Text>
+                <Text style={[styles.actionSubtitle, action.disabled && styles.actionSubtitleDisabled]}>
+                  {action.subtitle}
+                </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color="#C7C7CC" />
+              <MaterialIcons 
+                name="chevron-right" 
+                size={20} 
+                color={action.disabled ? "#E5E5EA" : "#C7C7CC"} 
+              />
             </TouchableOpacity>
           ))}
         </View>
@@ -220,6 +299,18 @@ const styles = StyleSheet.create({
     fontSize: tokens.fontSize.sm,
     fontFamily: 'Montserrat',
     color: semanticColors.text.secondary,
+  },
+  actionItemDisabled: {
+    opacity: 0.5,
+  },
+  actionIconDisabled: {
+    backgroundColor: semanticColors.background.secondary,
+  },
+  actionTitleDisabled: {
+    color: semanticColors.text.disabled,
+  },
+  actionSubtitleDisabled: {
+    color: semanticColors.text.disabled,
   },
   consoleContainer: {
     backgroundColor: tokens.colors.gray[900],

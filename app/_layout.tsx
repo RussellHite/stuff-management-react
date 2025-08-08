@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import {
   Besley_400Regular,
   Besley_500Medium,
@@ -16,6 +17,7 @@ import {
   Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
 import { semanticColors } from '../src/design';
+import { EnvironmentIndicator } from '../src/components/EnvironmentIndicator';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -54,13 +56,16 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="design-system" options={{ headerShown: false }} />
-      <Stack.Screen name="app-settings" options={{ headerShown: false }} />
-      <Stack.Screen name="about" options={{ headerShown: false }} />
-      <Stack.Screen name="developer-tools" options={{ headerShown: false }} />
-      <Stack.Screen name="authentication" options={{ headerShown: false }} />
-    </Stack>
+    <View style={{ flex: 1 }}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="design-system" options={{ headerShown: false }} />
+        <Stack.Screen name="app-settings" options={{ headerShown: false }} />
+        <Stack.Screen name="about" options={{ headerShown: false }} />
+        <Stack.Screen name="developer-tools" options={{ headerShown: false }} />
+        <Stack.Screen name="authentication" options={{ headerShown: false }} />
+      </Stack>
+      <EnvironmentIndicator position="top-right" />
+    </View>
   );
 }
