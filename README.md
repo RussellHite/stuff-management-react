@@ -2,6 +2,8 @@
 
 A React Native mobile application built with Expo and TypeScript for managing and organizing your stuff.
 
+<!-- SSH push access configured: 2025-08-08 -->
+
 ## 🚀 Getting Started
 
 ### Prerequisites
