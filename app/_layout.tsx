@@ -18,6 +18,7 @@ import {
 } from '@expo-google-fonts/montserrat';
 import { semanticColors } from '../src/design';
 import { EnvironmentIndicator } from '../src/components/EnvironmentIndicator';
+import { useUserStore } from '../src/store';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -45,11 +46,23 @@ export default function RootLayout() {
     'Montserrat-Bold': Montserrat_700Bold,
   });
 
+  const { initializeAuth } = useUserStore();
+
   useEffect(() => {
+    const initializeApp = async () => {
+      // Initialize authentication state from Supabase
+      await initializeAuth();
+      
+      // Hide splash screen after everything is loaded
+      if (fontsLoaded) {
+        SplashScreen.hideAsync();
+      }
+    };
+
     if (fontsLoaded) {
-      SplashScreen.hideAsync();
+      initializeApp();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, initializeAuth]);
 
   if (!fontsLoaded) {
     return null;

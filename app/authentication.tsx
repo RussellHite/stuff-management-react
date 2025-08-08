@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Image,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -18,28 +19,118 @@ import { useUserStore } from '../src/store';
 export default function AuthenticationScreen() {
   const insets = useSafeAreaInsets();
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('demo@stuffhappens.com');
-  const [password, setPassword] = useState('demo123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
-  const { login, logout, user, isAuthenticated, isLoading } = useUserStore();
+  const { 
+    login, 
+    logout, 
+    signUp, 
+    resetPassword,
+    user, 
+    isAuthenticated, 
+    isLoading,
+    initializeAuth 
+  } = useUserStore();
+
+  // Initialize auth when component mounts
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  const validateForm = () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return false;
+    }
+
+    if (!isLogin) {
+      if (!fullName) {
+        Alert.alert('Error', 'Please enter your full name');
+        return false;
+      }
+      if (password !== confirmPassword) {
+        Alert.alert('Error', 'Passwords do not match');
+        return false;
+      }
+      if (password.length < 6) {
+        Alert.alert('Error', 'Password must be at least 6 characters long');
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   const handleAuth = async () => {
-    if (isLogin) {
-      try {
-        await login(email, password);
-        Alert.alert('Success', 'Logged in successfully!');
-      } catch (error) {
-        Alert.alert('Error', error instanceof Error ? error.message : 'Login failed');
+    if (!validateForm()) return;
+
+    try {
+      if (isLogin) {
+        await login(email.trim(), password);
+        Alert.alert('Success', 'Welcome back!');
+      } else {
+        const { emailSent } = await signUp(email.trim(), password, fullName.trim());
+        
+        if (emailSent) {
+          Alert.alert(
+            'Check Your Email',
+            'We sent you a confirmation link. Please check your email and click the link to activate your account.',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  setIsLogin(true);
+                  setEmail('');
+                  setPassword('');
+                  setFullName('');
+                  setConfirmPassword('');
+                }
+              }
+            ]
+          );
+        } else {
+          Alert.alert('Success', 'Account created successfully!');
+        }
       }
-    } else {
-      Alert.alert('Info', 'Registration functionality coming soon!');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Authentication failed');
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    Alert.alert('Success', 'Logged out successfully!');
+  const handleResetPassword = async () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email address');
+      return;
+    }
+
+    try {
+      await resetPassword(email.trim());
+      Alert.alert(
+        'Reset Email Sent',
+        'Check your email for password reset instructions.',
+        [
+          {
+            text: 'OK',
+            onPress: () => setShowResetPassword(false)
+          }
+        ]
+      );
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Password reset failed');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      Alert.alert('Success', 'You have been signed out');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'Sign out failed');
+    }
   };
 
   // Show user profile if authenticated
@@ -52,7 +143,15 @@ export default function AuthenticationScreen() {
           <View style={styles.section}>
             <View style={styles.profileHeader}>
               <View style={styles.avatar}>
-                <MaterialIcons name="person" size={48} color="#007AFF" />
+                {user.avatar ? (
+                  <Image 
+                    source={{ uri: user.avatar }} 
+                    style={styles.avatarImage}
+                    defaultSource={{ uri: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}` }}
+                  />
+                ) : (
+                  <MaterialIcons name="person" size={48} color="#007AFF" />
+                )}
               </View>
               <Text style={styles.userName}>{user.name}</Text>
               <Text style={styles.userEmail}>{user.email}</Text>
@@ -98,6 +197,19 @@ export default function AuthenticationScreen() {
           </View>
 
           <View style={styles.form}>
+            {!isLogin && (
+              <View style={styles.inputContainer}>
+                <MaterialIcons name="person" size={20} color="#666" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Full Name"
+                  value={fullName}
+                  onChangeText={setFullName}
+                  autoCapitalize="words"
+                />
+              </View>
+            )}
+
             <View style={styles.inputContainer}>
               <MaterialIcons name="email" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
@@ -107,21 +219,24 @@ export default function AuthenticationScreen() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                editable={!showResetPassword}
               />
             </View>
 
-            <View style={styles.inputContainer}>
-              <MaterialIcons name="lock" size={20} color="#666" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-            </View>
+            {!showResetPassword && (
+              <View style={styles.inputContainer}>
+                <MaterialIcons name="lock" size={20} color="#666" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+            )}
 
-            {!isLogin && (
+            {!isLogin && !showResetPassword && (
               <View style={styles.inputContainer}>
                 <MaterialIcons name="lock" size={20} color="#666" style={styles.inputIcon} />
                 <TextInput
@@ -136,26 +251,73 @@ export default function AuthenticationScreen() {
 
             <TouchableOpacity
               style={[styles.primaryButton, isLoading && styles.disabledButton]}
-              onPress={handleAuth}
+              onPress={showResetPassword ? handleResetPassword : handleAuth}
               disabled={isLoading}
             >
               <Text style={styles.primaryButtonText}>
-                {isLoading ? 'Loading...' : isLogin ? 'Sign In' : 'Create Account'}
+                {isLoading 
+                  ? 'Loading...' 
+                  : showResetPassword 
+                    ? 'Send Reset Email'
+                    : isLogin 
+                      ? 'Sign In' 
+                      : 'Create Account'
+                }
               </Text>
             </TouchableOpacity>
 
-            {isLogin && (
-              <TouchableOpacity style={styles.linkButton}>
+            {isLogin && !showResetPassword && (
+              <TouchableOpacity 
+                style={styles.linkButton}
+                onPress={() => setShowResetPassword(true)}
+              >
                 <Text style={styles.linkText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            )}
+
+            {showResetPassword && (
+              <TouchableOpacity 
+                style={styles.linkButton}
+                onPress={() => {
+                  setShowResetPassword(false);
+                  setEmail('');
+                }}
+              >
+                <Text style={styles.linkText}>Back to Sign In</Text>
               </TouchableOpacity>
             )}
           </View>
 
+          {!showResetPassword && (
+            <View style={styles.switchModeContainer}>
+              <Text style={styles.switchModeText}>
+                {isLogin ? "Don't have an account?" : "Already have an account?"}
+              </Text>
+              <TouchableOpacity 
+                onPress={() => {
+                  setIsLogin(!isLogin);
+                  setEmail('');
+                  setPassword('');
+                  setConfirmPassword('');
+                  setFullName('');
+                }}
+              >
+                <Text style={styles.switchModeLink}>
+                  {isLogin ? 'Sign Up' : 'Sign In'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <View style={styles.note}>
             <MaterialIcons name="info" size={16} color="#666" />
             <Text style={styles.noteText}>
-              This is a placeholder authentication screen. No actual authentication is implemented
-              yet.
+              {showResetPassword 
+                ? 'Enter your email address to receive password reset instructions.'
+                : isLogin
+                  ? 'Sign in with your email and password. First time? Create an account below.'
+                  : 'Create a new account. You may need to verify your email address.'
+              }
             </Text>
           </View>
         </View>
@@ -298,5 +460,27 @@ const styles = StyleSheet.create({
     color: tokens.colors.white,
     fontSize: tokens.fontSize.md,
     fontFamily: 'Montserrat-SemiBold',
+  },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  switchModeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: tokens.spacing.md,
+    gap: tokens.spacing.xs,
+  },
+  switchModeText: {
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat',
+    color: semanticColors.text.secondary,
+  },
+  switchModeLink: {
+    fontSize: tokens.fontSize.md,
+    fontFamily: 'Montserrat-SemiBold',
+    color: semanticColors.text.accent,
   },
 });

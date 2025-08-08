@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { getEnvironmentConfig, getCurrentEnvironment } from '../utils/environment';
-import { designTokens } from '../constants/design-tokens';
+import { tokens, semanticColors } from '../design';
 
 interface EnvironmentIndicatorProps {
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     minWidth: 40,
     alignItems: 'center',
-    shadowColor: designTokens.colors.text.primary,
+    shadowColor: semanticColors.text.primary,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -79,10 +79,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   text: {
-    color: designTokens.colors.background.primary,
+    color: tokens.colors.white,
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: designTokens.fonts.ui.bold,
+    fontFamily: 'Montserrat-Bold',
     letterSpacing: 0.5,
   },
 });

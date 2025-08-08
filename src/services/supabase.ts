@@ -94,11 +94,7 @@ class SupabaseService {
       global: {
         fetch: (url, options = {}) => {
           // Add retry logic for network failures
-          return fetch(url, {
-            ...options,
-            // Timeout after 10 seconds
-            signal: AbortSignal.timeout(10000),
-          }).catch((error) => {
+          return fetch(url, options).catch((error) => {
             console.warn('Supabase request failed:', error);
             throw error;
           });
@@ -128,12 +124,8 @@ class SupabaseService {
     try {
       const client = this.getClient();
       
-      // Simple ping to test connection
-      const { error } = await client
-        .from('profiles')
-        .select('id')
-        .limit(1)
-        .single();
+      // Simple ping to test connection - just test auth endpoint
+      const { error } = await client.auth.getSession();
 
       const latency = Date.now() - startTime;
 
@@ -229,11 +221,9 @@ export const supabaseService = new SupabaseService();
 // Export client getter for direct use
 export const supabase = supabaseService.getClient();
 
-// Export convenience methods
-export const {
-  checkConnectionHealth,
-  getConnectionHealth,
-  getEnvironmentInfo,
-  testConnection,
-  resetClient,
-} = supabaseService;
+// Export convenience methods with proper binding
+export const checkConnectionHealth = () => supabaseService.checkConnectionHealth();
+export const getConnectionHealth = () => supabaseService.getConnectionHealth();
+export const getEnvironmentInfo = () => supabaseService.getEnvironmentInfo();
+export const testConnection = (retries?: number) => supabaseService.testConnection(retries);
+export const resetClient = () => supabaseService.resetClient();
